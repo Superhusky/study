@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dkp.mapper.TeamInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.dkp.entity.TeamInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="team_name" property="name" jdbcType="VARCHAR"/> <!--property中的字段名称要和实体类中的一一对应-->
+    </resultMap>
+
+    <select id="selectTeamInfoList" resultMap="BaseResultMap" resultType="java.lang.Integer">
+        select id ,team_name as name from team_info
+        where game_id = #{gameId,jdbcType=INTEGER};
+    </select>
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dkp.mapper.ActivityInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.dkp.entity.Activity">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="activity_name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectActivityInfoList" resultMap="BaseResultMap" resultType="java.lang.Integer">
+        select id ,activity_name as name from activity_info
+        where game_id = #{gameId,jdbcType=INTEGER} and team_id = #{teamId,jdbcType=INTEGER};
+    </select>
+</mapper>

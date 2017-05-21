@@ -1,0 +1,38 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<c:set var="servletPath" value="${pageContext.request.servletPath}"/>
+<div class="ui eleven item menu">
+    <a class="item" id="menu-dkp-org">DKP管理</a>
+    <a class="item" id="menu-set">修改密码</a>
+    <a class="item" id="menu-logout">安全退出</a>
+</div>
+<div></div>
+<h2 class="ui header" id="menu-header"></h2>
+<form id="naviForm" action="" method="get"></form>
+<script type="text/javascript">
+    $(".ui.menu .dropdown.item").dropdown({on: 'hover'});
+
+    $("a#menu-dkp-org").click(function () {
+        location.href = "/console/dkp/list";
+    })
+
+    $("a#menu-set").click(function () {
+        location.href = "/views/console/set.do";
+    });
+
+    $("a#menu-logout").click(function () {
+        var form = $('#naviForm')[0];
+        form.action = "/logout";
+        form.submit();
+    });
+
+    var servletPath = '${servletPath}';
+    var jspName = servletPath.substring(servletPath.lastIndexOf("/") + 1);
+    jspName = jspName.substring(0, jspName.indexOf("."));
+    $('#menu-' + jspName).addClass('active');
+
+    if (jspName != 'integrate') {
+        $(document).ready(function () {
+            $('#menu-header').text($('title').text());
+        });
+    }
+</script>
