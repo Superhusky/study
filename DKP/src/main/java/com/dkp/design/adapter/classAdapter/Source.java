@@ -7,6 +7,6 @@ package com.dkp.design.adapter.classAdapter;
 public class Source {
 
     public void Source() {
-        System.out.println("this is a Source");
+        System.out.println("this is a SourceAble");
     }
 }
