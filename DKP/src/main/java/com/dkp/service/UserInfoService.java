@@ -35,6 +35,12 @@ public class UserInfoService {
     @Autowired
     private GameInfoService gameInfoService;
 
+    public void getUserInfo() {
+        String userName = "id";
+        int i = userInfoMapper.selectUserInfoByName(userName);
+        System.out.println(i);
+    }
+
     public int userLogin(String name, String password) {
         System.out.println("我通过了测试");
         return userInfoMapper.findByNameAndPassword(name, password);
@@ -156,4 +162,5 @@ public class UserInfoService {
             System.out.println("登录失败");
         }
     }*/
+
 }

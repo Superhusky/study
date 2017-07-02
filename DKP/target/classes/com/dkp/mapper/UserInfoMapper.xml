@@ -29,4 +29,10 @@
         select user_name as userName,password from user_info
         where user_name = #{loginName,jdbcType=VARCHAR}
     </select>
+
+    <select id="selectUserInfoByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from user_info
+        where user_name = #{user_name} and user_name like '%${user_name}%' order by ${user_name};
+    </select>
+
 </mapper>

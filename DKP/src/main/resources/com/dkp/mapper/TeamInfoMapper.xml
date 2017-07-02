@@ -9,6 +9,7 @@
 
     <select id="selectTeamInfoList" resultMap="BaseResultMap" resultType="java.lang.Integer">
         select id ,team_name as name from team_info
-        where game_id = #{gameId,jdbcType=INTEGER};
+        where game_id = #{gameId,jdbcType=INTEGER}
+        and union_id = #{unionId,jdbcType=INTEGER};
     </select>
 </mapper>

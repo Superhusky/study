@@ -12,11 +12,11 @@ import java.util.List;
  */
 @Service
 public class GameInfoService {
+
     @Autowired
     private GameInfoMapper gameInfoMapper;
 
     public List<GameInfo> selectGameInfoList(){
         return gameInfoMapper.selectGameInfoList();
     }
-
 }

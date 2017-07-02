@@ -38,6 +38,7 @@ public class LoginController {
             // 已登录时重定向到shiro配置的success页面
             return "openDoor/integrate";
         }
+        userLoginService.getUserInfo();
         logger.debug("post login: login failed.");
         // 未登录时返回login页面
         return "openDoor/user_index";

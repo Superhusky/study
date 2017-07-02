@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <%@include file="/WEB-INF/views/include/head.jsp"%>
+    <%@include file="/WEB-INF/views/include/head.jsp" %>
     <link rel="stylesheet" href="${ctxStatic}/semantic/semantic.min.css"/>
     <script type="text/javascript" src="${ctxStatic}/semantic/semantic.min.js"></script>
     <script type="text/javascript" src="${ctxStatic}/jquery/jquery.zoom.js"></script>
@@ -23,52 +23,83 @@
             $('#sel-game').dropdown('setting', 'onChange', function () {
                 var gameId = $("#game").val();
 
-                // 团队dropdown
-                var selector = '#sel-team';
-                $(selector + ' .menu .item').remove();
-                var html = '<div class="item" data-value="">全部</div>';
-                $(selector + ' .menu').html(html);
-                $(selector).dropdown('set selected', '');
+                //union dropdown
+                var unionSelector = '#sel-union';
+                $(unionSelector + ' .menu .item').remove();
+                var unionHtml = '<div class="item" data-value="">全部</div>';
+                $(unionSelector + ' .menu').html(unionHtml);
+                $(unionSelector).dropdown('set selected', '');
 
-                // 活动dropdown
-                var selector = '#sel-activity';
-                $(selector + ' .menu .item').remove();
-                var html = '<div class="item" data-value="">全部</div>';
-                $(selector + ' .menu').html(html);
-                $(selector).dropdown('set selected', '');
+                // team dropdown
+                var teamSelector = '#sel-team';
+                $(teamSelector + ' .menu .item').remove();
+                var teamHtml = '<div class="item" data-value="">全部</div>';
+                $(teamSelector + ' .menu').html(teamHtml);
+                $(teamSelector).dropdown('set selected', '');
+
+                // activity dropdown
+                var activitySelector = '#sel-activity';
+                $(activitySelector + ' .menu .item').remove();
+                var activityHtml = '<div class="item" data-value="">全部</div>';
+                $(activitySelector + ' .menu').html(activityHtml);
+                $(activitySelector).dropdown('set selected', '');
 
                 if (gameId == '') {
                     return;
                 }
-                $.get('/console/dkp/team', {
+
+                $.get('/console/dkp/union', {
                     gameId: gameId
                 }, function (data, state) {
-                    console.log(state);
-                    if (data && data.length > 0) {
-                        var selector = '#sel-team';
+                    if (data && data.length >= 0) {
+                        var selector = '#sel-union';
                         $(selector + ' .menu .item').remove();
                         var html = '<div class="item" data-value="">全部</div>';
                         for (var i = 0; i < data.length; i++) {
-                            html += '<div class="item" data-value="' + data[i].id + '">' + data[i].name + '</div>';
+                            html += '<div class="item" data-value="' + data[i].id + '">' + data[i].unionName + '</div>'
                         }
                         $(selector + ' .menu').html(html);
                         $(selector).dropdown('set selected', '');
                     }
-                });
+                })
             });
 
-            //活动dropdown
+            $('#sel-union').dropdown('setting', 'onChange', function () {
+                var gameId = $("#game").val();
+                var unionId = $("#union").val();
+                if (unionId == '') {
+                    return;
+                }
+                $.get('/console/dkp/team/', {
+                    gameId: gameId,
+                    unionId: unionId
+                }, function (data, state) {
+                    if (data && data.length >= 0) {
+                        var selector = '#sel-team';
+                        var html = '<div class="item" data-value="">全部</div>';
+                        for (var i = 0; i < data.length; i++) {
+                            html += '<div class="item" data-value="' + data[i].id + '">' + data[i].name + '</div>'
+                        }
+                        $(selector + ' .menu').html(html);
+                        $(selector).dropdown('set selected', '')
+                    }
+                })
+            })
+
+            //team dropdown
             $('#sel-team').dropdown('setting', 'onChange', function () {
                 var teamId = $("#team").val();
                 var gameId = $('#game').val();
+                var unionId = $("#union").val();
                 if (teamId == '') {
                     return;
                 }
                 $.get('/console/dkp/activity/', {
                     gameId: gameId,
-                    teamId: teamId
+                    teamId: teamId,
+                    unionId: unionId
                 }, function (data, state) {
-                    if (data && data.length > 0) {
+                    if (data && data.length >= 0) {
                         var selector = '#sel-activity';
                         $(selector + ' .menu .item').remove();
                         var html = '<div class="item" data-value="">全部</div>';
@@ -98,7 +129,7 @@
 
             // 查询按钮
             $('#btn-query').click(function () {
-                if ($('#province').val() == '') {
+                if ($('#game').val() == '') {
                     return;
                 }
                 queryData(1);
@@ -109,42 +140,36 @@
         //获取当前页信息
         function queryData(pageNo) {
             showLoading();
-            $.get('/console/markException/list', {
-                        provinceId: $('#province').val(),
-                        regionId: $('#region').val(),
-                        schoolId: $('#school').val(),
-                        pageNo: pageNo,
-                        pageSize: 10
-                    }, function (data, state) {
-                        if (data && data.markExceptionInfoList && data.markExceptionInfoList.length > 0) {
-                            var dataList = data.markExceptionInfoList;
-                            $('#tbl-data tbody tr').remove();
-                            var trHtml = '';
-                            for (var i = 0; i < dataList.length; i++) {
-                                trHtml += '<tr>';
-                                trHtml += '<td>' + dataList[i].testId + '</td>';
-                                trHtml += '<td>' + dataList[i].paperName + '</td>';
-                                trHtml += '<td>' + dataList[i].schoolName + '</td>';
-                                trHtml += '<td>' + '<div class="ui button" name="btn-query-select" onclick="detailSet(\'' + dataList[i].testId + '\',\'' + 1 + '\')">查看</div>' + '</td>';
-                                trHtml += '</td>';
-                            }
-                            $('#tbl-data tbody').html(trHtml);
-                            $('#currentPage').val(data.pageNo);
-                            $('#no-data').hide();
-                            $('#tbl-data').show();
-                            showPaging(data.pageNo, data.pageSize, data.totalCount);
-                        }
-                        else {
-                            $('#tbl-data').hide();
-                            $('#no-data').show();
-                        }
-                        hideLoading();
+            $.get("/console/dkp/list", {
+                gameId: $("#game").val(),
+                teamId: $("#team").val(),
+                activityId: $("#activity").val(),
+                pageNo: pageNo,
+                pageNum: 10
+            }, function (data, state) {
+                if (data && data.dkpInfoList) {
+                    var dkpInfoList = data.dkpInfoList;
+                    $('#tbl-data tbody tr').remove();
+                    var trHtml = '';
+                    for (var i = 0; i < dkpInfoList.length; i++) {
+                        trHtml += '<tr>';
+                        trHtml += '<td>' + dkpInfoList[i].gameName + '</td>';
+                        trHtml += '<td>' + dkpInfoList[i].teamName + '</td>';
+                        trHtml += '<td>' + dkpInfoList[i].userName + '</td>';
+                        trHtml += '<td>' + dkpInfoList[i].activityName + '</td>';
                     }
-            );
+                    $('#tbl-data tbody').html(trHtml);
+                    $('#currentPage-popup').val(data.pageNo);
+                    $('#no-data').hide();
+                    $('#tbl-data').show();
+                    showPaging(data.pageNo, data.sumPage);
+                }
+            });
+            hideLoading();
         }
 
         //分页信息
-        function showPaging(currentPage, pageSize, totalCount) {
+        function showPaging(currentPage, totalCount) {
             var pageCount = totalCount;
             var pagingHtml;
             if (currentPage == 1) {
@@ -184,7 +209,7 @@
         }
 
         //批阅异常详细信息列表
-        function detailSet(testId,pageNo) {
+        function detailSet(testId, pageNo) {
             $.get('/console/markException/detail/list', {
                 testId: testId,
                 pageNo: pageNo,
@@ -218,11 +243,11 @@
                     $('#tbl-data-detail').show();
                     showPaging(data.pageNo, data.pageSize, data.totalCount);
                 } else {
-                    if(pageNo == 1){
+                    if (pageNo == 1) {
                         $('#tbl-data-detail').hide();
                         $('#no-data-detail').show();
-                    }else{
-                        detailQueryData(pageNo-1);
+                    } else {
+                        detailQueryData(pageNo - 1);
                     }
                 }
                 $('.ui.first.modal').modal('refresh');
@@ -348,7 +373,7 @@
             var questionImgIdArray = questionImgId.split(",");
             var pictureHtml = '';
             for (var i = 0; i < questionImgIdArray.length; i++) {
-                pictureHtml += '<img alt= "图片" style="width:750px;height=400px;" src="${ctxStatic}' + '/answer' + path + 'rotated' + '/' + paperId + '/' + number+ '/' + ansImgId + '/' + questionImgIdArray[i] + '.jpg' + '"/>';
+                pictureHtml += '<img alt= "图片" style="width:750px;height=400px;" src="${ctxStatic}' + '/answer' + path + 'rotated' + '/' + paperId + '/' + number + '/' + ansImgId + '/' + questionImgIdArray[i] + '.jpg' + '"/>';
             }
             $(pointSelector).html(pictureHtml);
 
@@ -374,9 +399,9 @@
             $('#update-button').html(updateHtml);
             $('#sel-button-popup').show();
 
-            if (imgEmptyFlag == 1){
+            if (imgEmptyFlag == 1) {
                 //给radio添加选中状态
-                $("input[name='errorType']").get(2).checked=true;
+                $("input[name='errorType']").get(2).checked = true;
                 seeDetailMarkException();
             }
             var pageNo = $('#currentPage-popup').val();
@@ -384,7 +409,7 @@
                 autofocus: false,
                 closable: false,
                 onHidden: function () {
-                    detailSet(testId,pageNo);
+                    detailSet(testId, pageNo);
                 }
             }).modal('show');
         }
@@ -393,7 +418,7 @@
         function showMarkException() {
             $('#sel-message-popup').hide();
             $('#sel-message2-popup').hide();
-            var number  = $('#number-popup').val();
+            var number = $('#number-popup').val();
             var type = $('#type-popup').val();
             var id = $('#id-popup').val();
             var question = $('#question-popup').val();
@@ -680,11 +705,11 @@
             $('#sel-fireWork-popup').hide();
             $('#sel-chooseDo-popup').hide();
             $('#sel-button-popup').hide();
-            if(imgEmptyFlag == 1){
+            if (imgEmptyFlag == 1) {
                 $('#revoke-button2').show();
                 $('#delete-button2').show();
                 $('#submit-button').hide();
-            }else {
+            } else {
                 $('#revoke-button2').hide();
                 $('#delete-button2').hide();
                 $('#submit-button').show();
@@ -819,7 +844,7 @@
             })
         }
 
-        function updateException(){
+        function updateException() {
             showErrorOnPopup("请选择异常解决方案");
 
         }
@@ -935,7 +960,7 @@
         //以上皆为通用函数(转圈圈，错误信息提示等)
 
     </script>
-    <title>DKP管理首页</title>
+    <title>DKP管理</title>
 </head>
 <body>
 <a href="${ctxStatic}/const/task_progress.xls" download="task_progress.xls" hidden><span id="a-export">运行导出</span></a>
@@ -956,6 +981,15 @@
                         <c:forEach items="${gameInfoList}" var="game">
                             <div class="item" data-value="${game.id}">${game.gameName}</div>
                         </c:forEach>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui selection dropdown" id="sel-union">
+                    <input id="union" name="union" type="hidden"/>
+                    <i class="dropdown icon"></i>
+                    <div class="default text">选择工会</div>
+                    <div class="menu">
                     </div>
                 </div>
             </div>
@@ -988,13 +1022,15 @@
     <input type="hidden" value="1" id="currentPage"/>
 
     <div id="no-data" style="display:none">NO DATA</div>
+
     <table class="ui celled compact table" style="display:none" id="tbl-data">
         <thead>
         <tr>
-            <th>考试号</th>
-            <th>试卷名</th>
-            <th>学校</th>
-            <th>操作</th>
+            <th>游戏名称</th>
+            <th>工会名称</th>
+            <th>团队名称</th>
+            <th>工会活动</th>
+            <th>团队成员</th>
         </tr>
         </thead>
         <tbody>
@@ -1109,7 +1145,8 @@
                     </div>
                     <div class="field">
                         <div class="ui radio checkbox" style="margin-bottom: 30px;">
-                            <input type="radio" name="errorType" id="errorType" onclick="seeDetailMarkException()" value="3">
+                            <input type="radio" name="errorType" id="errorType" onclick="seeDetailMarkException()"
+                                   value="3">
                             <label>其他异常错误！请上报管理员</label>
                         </div>
                     </div>
@@ -1144,10 +1181,10 @@
                     <div class="ui form">
                         <div class="fields">
                             <div class="six wide field" id="revoke-button2">
-                                <button class="fluid ui button"  onclick="revokeMarkException()">非批阅异常</button>
+                                <button class="fluid ui button" onclick="revokeMarkException()">非批阅异常</button>
                             </div>
                             <div class="five wide field" id="delete-button2">
-                                <button class="fluid ui button"  onclick="deleteDetailMarkException()">确认放弃</button>
+                                <button class="fluid ui button" onclick="deleteDetailMarkException()">确认放弃</button>
                             </div>
                             <div class="four wide field" id="submit-button">
                                 <button class="fluid ui button" onclick="updateImgEmptyFlag()">提交</button>
@@ -1222,13 +1259,13 @@
             <div class="ui form" style="margin-top: 80px;" id="sel-button-popup">
                 <div class="fields">
                     <div class="five wide field" id="update-button">
-                        <button class="fluid ui button"  onclick="updateException()">确认修改</button>
+                        <button class="fluid ui button" onclick="updateException()">确认修改</button>
                     </div>
                     <div class="six wide field" id="revoke-button">
-                        <button class="fluid ui button"  onclick="revokeMarkException()">非批阅异常</button>
+                        <button class="fluid ui button" onclick="revokeMarkException()">非批阅异常</button>
                     </div>
                     <div class="five wide field" id="delete-button">
-                        <button class="fluid ui button"  onclick="deleteDetailMarkException()">确认放弃</button>
+                        <button class="fluid ui button" onclick="deleteDetailMarkException()">确认放弃</button>
                     </div>
                 </div>
             </div>

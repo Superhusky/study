@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 /**
  * Created by 半夏微凉 on 2017/3/1.
  */
+
 public interface UserInfoMapper {
 
     int findByNameAndPassword(@Param("loginName") String loginName,
@@ -16,4 +17,6 @@ public interface UserInfoMapper {
 
     int judgeByNameAndPassword(@Param("loginName") String loginName,
                                @Param("password") String password);
+
+    int selectUserInfoByName(@Param("user_name") String user_name);
 }

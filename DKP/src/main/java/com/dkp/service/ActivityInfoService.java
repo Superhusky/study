@@ -16,7 +16,7 @@ public class ActivityInfoService {
     @Autowired
     private ActivityInfoMapper activityInfoMapper;
 
-    public List<Activity> selectActivityInfoList(Integer gameId, Integer teamId) {
-        return activityInfoMapper.selectActivityInfoList(gameId, teamId);
+    public List<Activity> selectActivityInfoList(Integer gameId, Integer teamId, Integer unionId) {
+        return activityInfoMapper.selectActivityInfoList(gameId, teamId, unionId);
     }
 }

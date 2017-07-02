@@ -12,7 +12,7 @@
     $(".ui.menu .dropdown.item").dropdown({on: 'hover'});
 
     $("a#menu-dkp-org").click(function () {
-        location.href = "/console/dkp/list";
+        location.href = "/console/dkp";
     })
 
     $("a#menu-set").click(function () {

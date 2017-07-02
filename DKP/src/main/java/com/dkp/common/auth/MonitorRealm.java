@@ -60,6 +60,9 @@ public class MonitorRealm extends AuthorizingRealm {
         }
         if (token != null ) {
             UserInfo userInfo = userInfoService.getUserByLoginName(token.getUsername());
+            if (userInfo == null) {
+                return null;
+            }
             return new SimpleAuthenticationInfo(userInfo.getUserName(), userInfo.getPassword(), getName());
         }
         return null;

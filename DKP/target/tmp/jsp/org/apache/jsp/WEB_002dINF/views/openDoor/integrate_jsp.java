@@ -68,6 +68,7 @@ public final class integrate_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\r\n");
       if (_jspx_meth_c_set_0(_jspx_page_context))
         return;
+      out.write(' ');
       out.write('\r');
       out.write('\n');
       if (_jspx_meth_c_set_1(_jspx_page_context))
@@ -124,7 +125,7 @@ public final class integrate_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("    $(\".ui.menu .dropdown.item\").dropdown({on: 'hover'});\n");
       out.write("\n");
       out.write("    $(\"a#menu-dkp-org\").click(function () {\n");
-      out.write("        location.href = \"/console/dkp/list\";\n");
+      out.write("        location.href = \"/console/dkp\";\n");
       out.write("    })\n");
       out.write("\n");
       out.write("    $(\"a#menu-set\").click(function () {\n");

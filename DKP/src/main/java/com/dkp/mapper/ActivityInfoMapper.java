@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface ActivityInfoMapper {
 
-    List<Activity> selectActivityInfoList(@Param("gameId") Integer gameId,@Param("teamId") Integer teamId);
+    List<Activity> selectActivityInfoList(@Param("gameId") Integer gameId,
+                                          @Param("teamId") Integer teamId,
+                                          @Param("unionId") Integer unionId);
 }
